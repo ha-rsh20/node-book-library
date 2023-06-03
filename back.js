@@ -1,9 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const book = require("./book-Schema");
-const user = require("./user-Schema");
 const cors = require("cors");
-const cart = require("./cart-Schema");
+const book = require("./Schemas/book-Schema");
+const user = require("./Schemas/user-Schema");
+const cart = require("./Schemas/cart-Schema");
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/books")

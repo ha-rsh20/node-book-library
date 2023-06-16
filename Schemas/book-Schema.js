@@ -5,6 +5,10 @@ const bookSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  sid: {
+    type: Number,
+    required: true,
+  },
   name: {
     type: String,
     required: true,
@@ -16,6 +20,13 @@ const bookSchema = mongoose.Schema({
   description: {
     type: String,
     required: true,
+  },
+  page: {
+    type: Number,
+    required: true,
+  },
+  cover: {
+    type: String,
   },
 });
 

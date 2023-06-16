@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const cartSchema = mongoose.Schema({
+  cid: {
+    type: Number,
+    required: true,
+  },
   bookid: {
     type: Number,
     required: true,
@@ -20,6 +24,13 @@ const cartSchema = mongoose.Schema({
   description: {
     type: String,
     required: true,
+  },
+  page: {
+    type: Number,
+    required: true,
+  },
+  quantity: {
+    type: Number,
   },
 });
 

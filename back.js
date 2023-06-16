@@ -66,6 +66,18 @@ app.get("/app/showBook/:id", (req, res) => {
     });
 });
 
+app.get("/app/showBooksBySeller/:sid", (req, res) => {
+  book
+    .find({ sid: req.params.sid })
+    .then((data) => {
+      res.status(200).send(data);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+      console.log(err);
+    });
+});
+
 app.get("/app/showUser/:id", (req, res) => {
   user
     .findOne({ id: req.params.id })
@@ -90,12 +102,29 @@ app.get("/app/showCart/:id", (req, res) => {
     });
 });
 
+app.get("/app/getCartId", (req, res) => {
+  cart
+    .find()
+    .then((data) => {
+      let arr = data;
+      let n = data.length - 1;
+      res.status(200).send(arr[n]);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+      console.log(err);
+    });
+});
+
 app.post("/app/addBook", (req, res) => {
   let newbook = new book({
     id: req.body.id,
+    sid: req.body.sid,
     name: req.body.name,
     price: req.body.price,
     description: req.body.description,
+    page: req.body.pages,
+    cover: req.body.cover,
   });
   newbook
     .save()
@@ -135,6 +164,9 @@ app.post("/app/addToCart/:uid/:bid", (req, res) => {
     name: req.body.name,
     price: req.body.price,
     description: req.body.description,
+    page: req.body.page,
+    cid: req.body.cid,
+    quantity: 1,
   });
   newcart
     .save()
@@ -155,8 +187,14 @@ app.put("/app/updateBook/:id", (req, res) => {
   if (req.body.price) {
     updatebook.price = req.body.price;
   }
-  if (req.body.email) {
+  if (req.body.description) {
     updatebook.description = req.body.description;
+  }
+  if (req.body.pages) {
+    updatebook.page = req.body.pages;
+  }
+  if (req.body.cover) {
+    updatebook.cover = req.body.cover;
   }
 
   book
@@ -172,29 +210,45 @@ app.put("/app/updateBook/:id", (req, res) => {
 
 app.put("/app/updateUser/:id", (req, res) => {
   let updateuser = {};
-  if (req.body.firstname) {
+  if (req.body.firstname != undefined) {
     updateuser.firstname = req.body.firstname;
   }
-  if (req.body.lastname) {
+  if (req.body.lastname != undefined) {
     updateuser.lastname = req.body.lastname;
   }
-  if (req.body.email) {
+  if (req.body.email != undefined) {
     updateuser.email = req.body.email;
   }
-  if (req.body.role) {
+  if (req.body.role != undefined) {
     updateuser.role = req.body.role;
   }
-  if (req.body.password) {
+  if (req.body.password != undefined) {
     updateuser.password = req.body.password;
   }
-
   user
-    .updateOne({ id: req.params.id }, { $set: update })
-    .then(() => {
-      res.status(200).send(updateuser);
+    .updateOne({ id: req.params.id }, { $set: updateuser })
+    .then((updatedUser) => {
+      console.log(updatedUser);
+      res.status(200).send(updatedUser);
     })
     .catch((err) => {
       res.status(500).send(err);
+      console.log(err);
+    });
+});
+
+app.put("/app/updateCartQuantity/:cid", (req, res) => {
+  let updateCartBook = {};
+  if (req.body.quantity != undefined) {
+    updateCartBook.quantity = req.body.quantity;
+  }
+
+  cart
+    .updateOne({ cid: req.params.cid }, { $set: updateCartBook })
+    .then(() => {
+      res.status(200).send(updateCartBook);
+    })
+    .catch((err) => {
       console.log(err);
     });
 });

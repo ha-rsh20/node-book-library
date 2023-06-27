@@ -116,6 +116,16 @@ app.get("/app/getCartId", (req, res) => {
     });
 });
 
+app.get("/app/getNameById/:id", (req, res) => {
+  let id = req.body;
+  let n = id.length;
+  let names = [];
+  console.log(id);
+
+  console.log(names);
+  res.status(200).send(names);
+});
+
 app.post("/app/addBook", (req, res) => {
   let newbook = new book({
     id: req.body.id,
@@ -125,6 +135,7 @@ app.post("/app/addBook", (req, res) => {
     description: req.body.description,
     page: req.body.pages,
     cover: req.body.cover,
+    sname: req.body.sname,
   });
   newbook
     .save()
@@ -208,6 +219,65 @@ app.put("/app/updateBook/:id", (req, res) => {
     });
 });
 
+app.put("/app/bookSell/:id/:cid", async (req, res) => {
+  let ibook = 0;
+  const name = req.body.buyer;
+  const quantity = req.body.quantity;
+
+  await book
+    .findOne({ id: req.params.id })
+    .then((book) => {
+      ibook = book;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  let buid = ibook.buyerid;
+  let buquantity = ibook.buyerquantity;
+
+  let updateBook = {};
+  let flag = true;
+
+  let names = ibook.buyerid;
+  let quan = ibook.buyerquantity;
+
+  if (names === undefined && quan === undefined) {
+    (names = ""), (quan = "");
+  } else {
+    names = names.split(",");
+    quan = quan.split(",");
+  }
+
+  for (let i = 0; i < names.length; i++) {
+    if (names[i] === name) {
+      flag = false;
+      quan[i] = (Number(quantity) + Number(quan[i])).toString();
+    }
+  }
+  if (flag) {
+    names = names + name.toString() + ",";
+    quan = quan + quantity.toString() + ",";
+  } else {
+    names = names + "";
+    quan = quan + "";
+  }
+
+  updateBook.selling = ibook.selling + 1 * quantity;
+  updateBook.buyerid = names;
+  updateBook.buyerquantity = quan;
+
+  book
+    .updateOne({ id: req.params.id }, { $set: updateBook })
+    .then((updatedBook) => {
+      res.status(200).send(updatedBook);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+      console.log(err);
+    });
+});
+
 app.put("/app/updateUser/:id", (req, res) => {
   let updateuser = {};
   if (req.body.firstname != undefined) {
@@ -228,7 +298,6 @@ app.put("/app/updateUser/:id", (req, res) => {
   user
     .updateOne({ id: req.params.id }, { $set: updateuser })
     .then((updatedUser) => {
-      console.log(updatedUser);
       res.status(200).send(updatedUser);
     })
     .catch((err) => {

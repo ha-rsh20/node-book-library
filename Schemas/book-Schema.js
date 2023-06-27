@@ -28,6 +28,18 @@ const bookSchema = mongoose.Schema({
   cover: {
     type: String,
   },
+  sname: {
+    type: String,
+  },
+  selling: {
+    type: Number,
+  },
+  buyerid: {
+    type: String,
+  },
+  buyerquantity: {
+    type: String,
+  },
 });
 
 const book = mongoose.model("book", bookSchema);

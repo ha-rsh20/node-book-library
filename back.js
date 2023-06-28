@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://funny-hamster-5f3565.netlify.app/",
+    origin: "https://funny-hamster-5f3565.netlify.app",
   })
 );
 

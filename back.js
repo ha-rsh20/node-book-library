@@ -7,7 +7,7 @@ const cart = require("./Schemas/cart-Schema");
 
 mongoose
   .connect(
-    "mongodb+srv://book-connect1:4mptJG4QQeVzYTj3@cluster0.opsexsn.mongodb.net/",
+    "url-of-atlas-or-mongodb-to-connect",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,

@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://bookmgmt.netlify.app","https://vbook.onrender.com/"],
+    origin: ['https://bookmgmt.netlify.app','https://vbook.onrender.com'],
   })
 );
 

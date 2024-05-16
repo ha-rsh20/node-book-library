@@ -58,7 +58,9 @@ function authenticateToken(req, res, next) {
       res.sendStatus(403);
     }
     //req.email = email;
-    next();
+    else {
+      next();
+    }
   });
 }
 

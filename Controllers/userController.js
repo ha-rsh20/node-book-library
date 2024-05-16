@@ -16,7 +16,14 @@ const getUserById = (req, res) => {
   user
     .findOne({ id: req.params.id })
     .then((data) => {
-      res.status(200).send(data);
+      let user = {
+        id: data.id,
+        firstname: data.firstname,
+        lastname: data.lastname,
+        email: data.email,
+        role: data.role,
+      };
+      res.status(200).send(user);
     })
     .catch((err) => {
       res.status(500).send(err);
@@ -44,32 +51,44 @@ const addUser = (req, res) => {
     });
 };
 
-const updateUser = (req, res) => {
-  let updateuser = {};
-  if (req.body.firstname != undefined) {
-    updateuser.firstname = req.body.firstname;
-  }
-  if (req.body.lastname != undefined) {
-    updateuser.lastname = req.body.lastname;
-  }
-  if (req.body.email != undefined) {
-    updateuser.email = req.body.email;
-  }
-  if (req.body.role != undefined) {
-    updateuser.role = req.body.role;
-  }
-  if (req.body.password != undefined) {
-    updateuser.password = req.body.password;
-  }
-  user
-    .updateOne({ id: req.params.id }, { $set: updateuser })
-    .then((updatedUser) => {
-      res.status(200).send(updatedUser);
+const updateUser = async (req, res) => {
+  let user;
+  await user
+    .findOne({ id: req.params.id })
+    .then((data) => {
+      user = data;
     })
     .catch((err) => {
-      res.status(500).send(err);
       console.log(err);
+      res.sendStatus(500);
     });
+
+  if (user.password === req.body.password) {
+    let updateuser = {};
+    if (req.body.firstname != undefined) {
+      updateuser.firstname = req.body.firstname;
+    }
+    if (req.body.lastname != undefined) {
+      updateuser.lastname = req.body.lastname;
+    }
+    if (req.body.email != undefined) {
+      updateuser.email = req.body.email;
+    }
+    if (req.body.role != undefined) {
+      updateuser.role = req.body.role;
+    }
+    user
+      .updateOne({ id: req.params.id }, { $set: updateuser })
+      .then((updatedUser) => {
+        res.status(200).send(updatedUser);
+      })
+      .catch((err) => {
+        res.status(500).send(err);
+        console.log(err);
+      });
+  } else {
+    res.sendStatus(500);
+  }
 };
 
 const deleteUser = (req, res) => {

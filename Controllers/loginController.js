@@ -48,7 +48,7 @@ function generateAccessToken(email) {
 }
 
 function authenticateToken(req, res, next) {
-  const authHeader = req.body.headers["Authorization"];
+  const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) {
     return res.sendStatus(401);
@@ -58,7 +58,6 @@ function authenticateToken(req, res, next) {
       res.sendStatus(403);
     }
     //req.email = email;
-    res.locals.email = email.email;
     next();
   });
 }

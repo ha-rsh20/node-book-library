@@ -1,4 +1,5 @@
 const book = require("../Schemas/book-Schema");
+const { users, tokenMapUser } = require("../Controllers/loginController");
 
 const getAllBooks = (req, res) => {
   book
@@ -36,26 +37,46 @@ const getBookBySeller = (req, res) => {
     });
 };
 
-const addBook = (req, res) => {
-  let newbook = new book({
-    id: req.body.id,
-    sid: req.body.sid,
-    name: req.body.name,
-    price: req.body.price,
-    description: req.body.description,
-    page: req.body.pages,
-    cover: req.body.cover,
-    sname: req.body.sname,
-  });
-  newbook
-    .save()
-    .then((book) => {
-      res.status(201).send(book);
-    })
-    .catch((err) => {
-      res.status(500).send(err);
-      console.log(err);
+const addBook = async (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  const userEmail = tokenMapUser.get(token);
+  const user = users.filter((user) => user.email === userEmail);
+
+  if (user) {
+    let books;
+    await book
+      .find()
+      .then((data) => {
+        books = data;
+      })
+      .catch((err) => {
+        res.sendStatus(500);
+      });
+
+    let newbook = new book({
+      id: books[books.length - 1].id + 1,
+      sid: user[0].id,
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description,
+      page: req.body.pages,
+      cover: req.body.cover,
+      sname: user[0].firstname + " " + user[0].lastname,
     });
+
+    newbook
+      .save()
+      .then((book) => {
+        res.status(201).send(book);
+      })
+      .catch((err) => {
+        res.status(500).send(err);
+        console.log(err);
+      });
+  } else {
+    res.sendStatus(500);
+  }
 };
 
 const updateBook = (req, res) => {

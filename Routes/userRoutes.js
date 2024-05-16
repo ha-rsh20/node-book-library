@@ -17,11 +17,19 @@ const {
 } = require("../Middleware/authorizeAccess");
 const router = express.Router();
 
-router.route("/showAllUsers").post(authorizeAdmin, getAllUsers);
-router.route("/showUser/:id").get(checkAuthenticate, getUserById);
-router.route("/addUser").post(authorizeAdmin, addUser);
-router.route("/updateUser/:id").put(checkAuthenticate, updateUser);
-router.route("/deleteUser/:id").delete(authorizeAdmin, deleteUser);
+router
+  .route("/showAllUsers")
+  .get(authenticateToken, authorizeAdmin, getAllUsers);
+router
+  .route("/showUser/:id")
+  .get(authenticateToken, checkAuthenticate, getUserById);
+router.route("/addUser").post(authenticateToken, authorizeAdmin, addUser);
+router
+  .route("/updateUser/:id")
+  .put(authenticateToken, checkAuthenticate, updateUser);
+router
+  .route("/deleteUser/:id")
+  .delete(authenticateToken, authorizeAdmin, deleteUser);
 
 router.route("/login").post(login);
 router.route("/register").post(register);

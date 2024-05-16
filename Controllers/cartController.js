@@ -38,7 +38,18 @@ const getLastCartItem = (req, res) => {
     });
 };
 
-const addCartItem = (req, res) => {
+const addCartItem = async (req, res) => {
+  let cartItem;
+  await cart
+    .find()
+    .then((data) => {
+      cartItem = data;
+    })
+    .catch((err) => {
+      console.log(err);
+      res.sendStatus(500);
+    });
+  let cartId = cartItem[cartItem.length - 1].cid + 1;
   let newcart = new cart({
     userid: req.params.uid,
     bookid: req.params.bid,
@@ -46,7 +57,7 @@ const addCartItem = (req, res) => {
     price: req.body.price,
     description: req.body.description,
     page: req.body.page,
-    cid: req.body.cid,
+    cid: cartId,
     quantity: 1,
   });
   newcart

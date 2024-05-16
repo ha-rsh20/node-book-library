@@ -9,18 +9,28 @@ const {
   bookSell,
 } = require("../Controllers/bookController");
 const {
-  authorizeAdmin,
-  authorizeBuyer,
   authorizeSeller,
+  checkAuthenticate,
 } = require("../Middleware/authorizeAccess");
+const { authenticateToken } = require("../Controllers/loginController");
 const router = express.Router();
 
 router.route("/showAllBooks").get(getAllBooks);
-router.route("/showBook/:id").get(authorizeSeller, getBookById);
-router.route("/showBooksBySeller/:sid").get(authorizeSeller, getBookBySeller);
-router.route("/addBook").post(authorizeSeller, addBook);
-router.route("/updateBook/:id").put(authorizeSeller, updateBook);
-router.route("/deleteBook/:id").delete(authorizeSeller, deleteBook);
-router.route("/bookSell/:id/:cid").delete(authorizeSeller, bookSell);
+router
+  .route("/showBook/:id")
+  .get(authenticateToken, authorizeSeller, getBookById);
+router
+  .route("/showBooksBySeller/:sid")
+  .get(authenticateToken, authorizeSeller, getBookBySeller);
+router.route("/addBook").post(authenticateToken, authorizeSeller, addBook);
+router
+  .route("/updateBook/:id")
+  .put(authenticateToken, authorizeSeller, updateBook);
+router
+  .route("/deleteBook/:id")
+  .delete(authenticateToken, authorizeSeller, deleteBook);
+router
+  .route("/bookSell/:id/:cid")
+  .delete(authenticateToken, checkAuthenticate, bookSell);
 
 module.exports = router;
